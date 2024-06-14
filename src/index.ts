@@ -18,6 +18,7 @@ import {catrouter} from "./status_catalog/state_catalog.router";
 import {ownerrouter} from "./restaurant_owner/restaurant_owner.router";
 import { authRouter } from './auth/auth.router'
 import {html} from "hono/html"
+import { readFileSync } from "fs";
 
 const app = new Hono()
 // Use the appropriate method to start the server in Node.js
@@ -41,8 +42,14 @@ app.route('/api', authRouter);   //15
 
 
 //default route
-app.get('/', (c) => {
-  return c.text('Hello Hono! ')
+app.get('/', async (c) => {
+    try {
+        const htmlString = readFileSync('./index.html', 'utf8')
+        return c.html(htmlString)
+    } catch(error: any) {
+      return c.json({error: error.message,status: 500})
+    };
+    
 })
 
 
